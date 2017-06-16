@@ -7,6 +7,7 @@ from app.models import ArticleType, article_types, Source, \
     Plugin, BlogView
 
 app = create_app()
+app.debug = True
 manager = Manager(app)
 migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)

@@ -16,6 +16,10 @@ class SubmitArticlesForm(CommonForm):
     content = TextAreaField(u'博文内容', validators=[DataRequired()])
     summary = TextAreaField(u'博文摘要', validators=[DataRequired()])
 
+class SubmitMarkdownForm(CommonForm):
+    title = StringField(u'标题', validators=[DataRequired(), Length(1, 64)])
+    text = TextAreaField(u'博文内容', validators=[DataRequired()])
+    summary = TextAreaField(u'博文摘要', validators=[DataRequired()])
 
 class ManageArticlesForm(CommonForm):
     pass

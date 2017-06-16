@@ -14,7 +14,7 @@ from ..models import ArticleType, Source, Article, article_types, \
 from .forms import SubmitArticlesForm, ManageArticlesForm, DeleteArticleForm, \
     DeleteArticlesForm, AdminCommentForm, DeleteCommentsForm, AddArticleTypeForm, \
     EditArticleTypeForm, AddArticleTypeNavForm, EditArticleNavTypeForm, SortArticleNavTypeForm, \
-    CustomBlogInfoForm, AddBlogPluginForm, ChangePasswordForm, EditUserInfoForm
+    CustomBlogInfoForm, AddBlogPluginForm, ChangePasswordForm, EditUserInfoForm, SubmitMarkdownForm
 from .. import db
 
 
@@ -57,6 +57,40 @@ def submitArticles():
 
     return render_template('admin/submit_articles.html', form=form)
 
+@admin.route('/submit-markdown', methods=['GET', 'POST'])
+@login_required
+def submitMarkdown():
+    form = SubmitMarkdownForm()
+    
+    
+    sources = [(s.id, s.name) for s in Source.query.all()]
+    form.source.choices = sources
+    types = [(t.id, t.name) for t in ArticleType.query.all()]
+    form.types.choices = types
+
+    if form.validate_on_submit():
+        title = form.title.data
+        source_id = form.source.data
+        text = form.text.data
+        type_id = form.types.data
+        summary = form.summary.data
+
+        source = Source.query.get(source_id)
+        articleType = ArticleType.query.get(type_id)
+
+        if source and articleType:
+            article = Article(title=title, content=text, summary=summary,
+                              source=source, articleType=articleType)
+            db.session.add(article)
+            db.session.commit()
+            flash(u'发表博文成功！', 'success')
+            article_id = Article.query.filter_by(title=title).first().id
+            return redirect(url_for('main.articleDetails', id=article_id))
+    if form.errors:
+        flash(u'发表博文失败', 'danger')
+
+
+    return render_template('admin/submit_markdown.html', form=form)
 
 @admin.route('/edit-articles/<int:id>', methods=['GET', 'POST'])
 @login_required
