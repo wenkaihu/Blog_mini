@@ -393,10 +393,10 @@ class Plugin(db.Model):
 class Tag(db.Model):
     __tablesname__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(64), unique=True)
+    name = db.Column(db.String(64), unique=True)
     
 class TagArticleMap(db.Model):
-    __tablesname__ = 'tags'
+    __tablesname__ = 'tags_articles'
     tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'),
                            primary_key=True)
     article_id = db.Column(db.Integer, db.ForeignKey('articles.id'),

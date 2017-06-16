@@ -93,8 +93,8 @@ def submitMarkdown():
             flash(u'发表博文成功！', 'success')
             article_id = Article.query.filter_by(title=title).first().id
             
-            markdown = Markdown(content=text, article_id=article_id)
-            db.session.add(markdown)
+            md = Markdown(content=text, article_id=article_id)
+            db.session.add(md)
             db.session.commit()
             
             return redirect(url_for('main.articleDetails', id=article_id))

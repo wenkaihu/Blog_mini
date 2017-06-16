@@ -118,6 +118,25 @@ def upgrade():
     sa.ForeignKeyConstraint(['follower_id'], ['comments.id'], ),
     sa.PrimaryKeyConstraint('follower_id', 'followed_id')
     )
+    op.create_table('tags',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=64), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('tags_articles',
+    sa.Column('tag_id', sa.Integer(), nullable=False),
+    sa.Column('article_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['article_id'], ['articles.id'], ),
+    sa.ForeignKeyConstraint(['tag_id'], ['tags.id'], ),
+    sa.PrimaryKeyConstraint('tag_id', 'article_id')
+    )
+    op.create_table('markdowns',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('content', sa.Text(), nullable=True),
+    sa.Column('article_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['article_id'], ['articles.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     ### end Alembic commands ###
 
 
