@@ -18,6 +18,7 @@ from .forms import SubmitArticlesForm, ManageArticlesForm, DeleteArticleForm, \
 from .. import db
 
 import markdown
+from mdx_gfm import GithubFlavoredMarkdownExtension
 
 
 @admin.route('/')
@@ -81,7 +82,9 @@ def submitMarkdown():
         articleType = ArticleType.query.get(type_id)
 
         if source and articleType:
-            article = Article(title=title, content=markdown.markdown(text), summary=summary,
+            article = Article(title=title, content=markdown.markdown(text, 
+                              extensions=[GithubFlavoredMarkdownExtension()]), 
+                              summary=summary,
                               source=source, articleType=articleType)
             db.session.add(article)
             db.session.commit()
