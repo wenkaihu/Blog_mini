@@ -10,7 +10,7 @@ from flask import render_template, redirect, flash, \
 from flask.ext.login import login_required, current_user
 from . import admin
 from ..models import ArticleType, Source, Article, article_types, \
-    Comment, User, Follow, Menu, ArticleTypeSetting, BlogInfo, Plugin
+    Comment, User, Follow, Menu, ArticleTypeSetting, BlogInfo, Plugin, Markdown
 from .forms import SubmitArticlesForm, ManageArticlesForm, DeleteArticleForm, \
     DeleteArticlesForm, AdminCommentForm, DeleteCommentsForm, AddArticleTypeForm, \
     EditArticleTypeForm, AddArticleTypeNavForm, EditArticleNavTypeForm, SortArticleNavTypeForm, \
@@ -82,14 +82,21 @@ def submitMarkdown():
         articleType = ArticleType.query.get(type_id)
 
         if source and articleType:
+    
             article = Article(title=title, content=markdown.markdown(text, 
                               extensions=[GithubFlavoredMarkdownExtension()]), 
                               summary=summary,
                               source=source, articleType=articleType)
             db.session.add(article)
             db.session.commit()
+
             flash(u'发表博文成功！', 'success')
             article_id = Article.query.filter_by(title=title).first().id
+            
+            markdown = Markdown(content=text, article_id=article_id)
+            db.session.add(markdown)
+            db.session.commit()
+            
             return redirect(url_for('main.articleDetails', id=article_id))
     if form.errors:
         flash(u'发表博文失败', 'danger')

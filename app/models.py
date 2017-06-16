@@ -339,9 +339,14 @@ class Article(db.Model):
         db.session.add(article)
         db.session.commit()
 
-    def __repr__(self):
-        return '<Article %r>' % self.title
+class Markdown(db.Model):
+    __tablename__ = 'markdowns'
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text)
+    article_id = db.Column(db.Integer, db.ForeignKey('articles.id'))
 
+    def __repr__(self):
+        return '<Markdown %r>' % self.title
 
 class BlogInfo(db.Model):
     __tablename__ = 'blog_info'
@@ -385,6 +390,17 @@ class Plugin(db.Model):
     def __repr__(self):
         return '<Plugin %r>' % self.title
 
+class Tag(db.Model):
+    __tablesname__ = 'tags'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64), unique=True)
+    
+class TagArticleMap(db.Model):
+    __tablesname__ = 'tags'
+    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'),
+                           primary_key=True)
+    article_id = db.Column(db.Integer, db.ForeignKey('articles.id'),
+                         primary_key=True)
 
 class BlogView(db.Model):
     __tablename__ = 'blog_view'
