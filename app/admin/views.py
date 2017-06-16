@@ -17,6 +17,8 @@ from .forms import SubmitArticlesForm, ManageArticlesForm, DeleteArticleForm, \
     CustomBlogInfoForm, AddBlogPluginForm, ChangePasswordForm, EditUserInfoForm, SubmitMarkdownForm
 from .. import db
 
+import markdown
+
 
 @admin.route('/')
 @login_required
@@ -79,7 +81,7 @@ def submitMarkdown():
         articleType = ArticleType.query.get(type_id)
 
         if source and articleType:
-            article = Article(title=title, content=text, summary=summary,
+            article = Article(title=title, content=markdown.markdown(text), summary=summary,
                               source=source, articleType=articleType)
             db.session.add(article)
             db.session.commit()

@@ -15,3 +15,4 @@ flask-login==0.3.2
 flask-moment==0.5.1
 ForgeryPy==0.1
 gunicorn==19.4.5
+Markdown==2.6.8
