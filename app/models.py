@@ -60,7 +60,6 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
 class Menu(db.Model):
     __tablename__ = 'menus'
     id = db.Column(db.Integer, primary_key=True)
@@ -94,7 +93,6 @@ class Menu(db.Model):
     def __repr__(self):
         return '<Menu %r>' % self.name
 
-
 class ArticleTypeSetting(db.Model):
     __tablename__ = 'articleTypeSettings'
     id = db.Column(db.Integer, primary_key=True)
@@ -123,7 +121,6 @@ class ArticleTypeSetting(db.Model):
 
     def __repr__(self):
         return '<ArticleTypeSetting %r>' % self.name
-
 
 class ArticleType(db.Model):
     __tablename__ = 'articleTypes'
@@ -175,7 +172,6 @@ class ArticleType(db.Model):
     def __repr__(self):
         return '<Type %r>' % self.name
 
-
 class Source(db.Model):
     __tablename__ = 'sources'
     id = db.Column(db.Integer, primary_key=True)
@@ -197,14 +193,12 @@ class Source(db.Model):
     def __repr__(self):
         return '<Source %r>' % self.name
 
-
 class Follow(db.Model):
     __tablename__ = 'follows'
     follower_id = db.Column(db.Integer, db.ForeignKey('comments.id'),
                            primary_key=True)
     followed_id = db.Column(db.Integer, db.ForeignKey('comments.id'),
                          primary_key=True)
-
 
 class Comment(db.Model):
     __tablename__ = 'comments'
@@ -362,7 +356,6 @@ class BlogInfo(db.Model):
                                   navbar='inverse')
         db.session.add(blog_mini_info)
         db.session.commit()
-
 
 class Plugin(db.Model):
     __tablename__ = 'plugins'

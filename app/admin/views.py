@@ -10,7 +10,7 @@ from flask import render_template, redirect, flash, \
 from flask.ext.login import login_required, current_user
 from . import admin
 from ..models import ArticleType, Source, Article, article_types, \
-    Comment, User, Follow, Menu, ArticleTypeSetting, BlogInfo, Plugin, Markdown
+    Comment, User, Follow, Menu, ArticleTypeSetting, BlogInfo, Plugin, Markdown, BlogView
 from .forms import SubmitArticlesForm, ManageArticlesForm, DeleteArticleForm, \
     DeleteArticlesForm, AdminCommentForm, DeleteCommentsForm, AddArticleTypeForm, \
     EditArticleTypeForm, AddArticleTypeNavForm, EditArticleNavTypeForm, SortArticleNavTypeForm, \
@@ -20,12 +20,10 @@ from .. import db
 import markdown
 from mdx_gfm import GithubFlavoredMarkdownExtension
 
-
 @admin.route('/')
 @login_required
 def manager():
     return redirect(url_for('admin.custom_blog_info'))
-
 
 @admin.route('/submit-articles', methods=['GET', 'POST'])
 @login_required
@@ -136,7 +134,6 @@ def editArticles(id):
     form.summary.data = article.summary
     return render_template('admin/submit_articles.html', form=form)
 
-
 @admin.route('/manage-articles', methods=['GET', 'POST'])
 @login_required
 def manage_articles():
@@ -194,7 +191,6 @@ def manage_articles():
                            form=form, form2=form2, form3=from3,
                            types_id=types_id, source_id=source_id, page=page)
 
-
 @admin.route('/manage-articles/delete-article', methods=['GET', 'POST'])
 @login_required
 def delete_article():
@@ -221,7 +217,6 @@ def delete_article():
 
     return redirect(url_for('admin.manage_articles', types_id=types_id, source_id=source_id,
                             page=request.args.get('page', 1, type=int)))
-
 
 @admin.route('/manage-articles/delete-articles', methods=['GET', 'POST'])
 @login_required
@@ -257,7 +252,6 @@ def delete_articles():
     return redirect(url_for('admin.manage_articles', types_id=types_id, source_id=source_id,
                             page=request.args.get('page', 1, type=int)))
 
-
 @admin.route('/manage-comments/disable/<int:id>')
 @login_required
 def disable_comment(id):
@@ -275,7 +269,6 @@ def disable_comment(id):
                             id=comment.article_id,
                             page=request.args.get('page', 1, type=int)))
 
-
 @admin.route('/manage-comments/enable/<int:id>')
 @login_required
 def enable_comment(id):
@@ -292,7 +285,6 @@ def enable_comment(id):
     return redirect(url_for('main.articleDetails',
                             id=comment.article_id,
                             page=request.args.get('page', 1, type=int)))
-
 
 # 单条评论的删除，这里就不使用表单或者Ajax了，这与博文的管理不同，但后面多条评论的删除会使用Ajax
 # 前面在admin页面删除单篇博文时使用表单而不是Ajax，其实使用Ajax效果会更好，当然这里只是尽可能
@@ -318,7 +310,6 @@ def delete_comment(id):
     return redirect(url_for('main.articleDetails',
                             id=article_id,
                             page=request.args.get('page', 1, type=int)))
-
 
 @admin.route('/manage-comments', methods=['GET', 'POST'])
 @login_required
@@ -358,7 +349,6 @@ def manage_comments():
                            pagination=pagination, page=page,
                            endpoint='.manage_comments', form=form, form2=form2)
 
-
 @admin.route('/manage-comments/delete-comments', methods=['GET', 'POST'])
 @login_required
 def delete_comments():
@@ -383,7 +373,6 @@ def delete_comments():
 
     page = request.args.get('page', 1, type=int)
     return redirect(url_for('.manage_comments', page=page))
-
 
 @admin.route('/manage-articleTypes', methods=['GET', 'POST'])
 @login_required
@@ -438,7 +427,6 @@ def manage_articleTypes():
 # 提示，添加分类的验证表单也写在了上面，建议可以分开来写，这里只是提供一种方法，前面的也是如此
 # 虽然分开来写会多写一点代码，但这样的逻辑就更清晰了
 # 另外需要注意的是，两个验证表单写在同一个view当中会出现问题，所以建议还是分开来写
-
 
 @admin.route('/manage-articletypes/edit-articleType', methods=['POST'])
 def edit_articleType():
@@ -500,7 +488,6 @@ def edit_articleType():
         flash(u'修改分类失败！请查看填写有无错误。', 'danger')
         return redirect(url_for('.manage_articleTypes', page=page))
 
-
 @admin.route('/manage-articleTypes/delete-articleType/<int:id>')
 @login_required
 def delete_articleType(id):
@@ -530,7 +517,6 @@ def delete_articleType(id):
         flash(u'删除分类成功！同时将原来该分类的%s篇博文添加到<未分类>。' % count, 'success')
     return redirect(url_for('admin.manage_articleTypes', page=page))
 
-
 @admin.route('/manage-articleTypes/get-articleType-info/<int:id>')
 @login_required
 def get_articleType_info(id):
@@ -546,7 +532,6 @@ def get_articleType_info(id):
             'introduction': articletype.introduction,
             'menu': articletype.menu_id or -1
         })
-
 
 @admin.route('/manage-articleTypes/nav', methods=['GET', 'POST'])
 @login_required
@@ -581,7 +566,6 @@ def manage_articleTypes_nav():
                            pagination=pagination, endpoint='.manage_articleTypes_nav',
                            page=page, form=form, form2=form2, form3=form3)
 
-
 @admin.route('/manage-articleTypes/nav/edit-nav', methods=['GET', 'POST'])
 @login_required
 def edit_nav():
@@ -606,7 +590,6 @@ def edit_nav():
         flash(u'修改导航失败！请查看填写有无错误。', 'danger')
         return redirect(url_for('admin.manage_articleTypes_nav', page=page))
 
-
 @admin.route('/manage-articleTypes/nav/delete-nav/<int:id>')
 @login_required
 def delete_nav(id):
@@ -629,7 +612,6 @@ def delete_nav(id):
         flash(u'删除导航成功！同时将原来该导航的%s种分类的导航设置为无。' % count, 'success')
     return redirect(url_for('admin.manage_articleTypes_nav', page=page))
 
-
 @admin.route('/manage-articleTypes/nav/sort-up/<int:id>')
 @login_required
 def nav_sort_up(id):
@@ -646,7 +628,6 @@ def nav_sort_up(id):
     else:
         flash(u'该导航已经位于最前面！', 'danger')
     return redirect(url_for('admin.manage_articleTypes_nav', page=page))
-
 
 @admin.route('/manage-articleTypes/nav/sort-down/<int:id>')
 @login_required
@@ -665,7 +646,6 @@ def nav_sort_down(id):
         flash(u'该导航已经位于最后面！', 'danger')
     return redirect(url_for('admin.manage_articleTypes_nav', page=page))
 
-
 @admin.route('/manage-articleTypes/get-articleTypeNav-info/<int:id>')
 @login_required
 def get_articleTypeNav_info(id):
@@ -675,7 +655,6 @@ def get_articleTypeNav_info(id):
             'name': menu.name,
             'nav_id': menu.id,
         })
-
 
 @admin.route('/custom/blog-info', methods=['GET', 'POST'])
 @login_required
@@ -701,7 +680,6 @@ def custom_blog_info():
 
     return render_template('admin/custom_blog_info.html', form=form)
 
-
 @admin.route('/custom/blog-info/get')
 @login_required
 def get_blog_info():
@@ -717,7 +695,6 @@ def get_blog_info():
             'navbar': navbar,
         })
 
-
 @admin.route('/custom/blog-plugin', methods=['GET', 'POST'])
 @login_required
 def custom_blog_plugin():
@@ -731,7 +708,6 @@ def custom_blog_plugin():
     return render_template('admin/custom_blog_plugin.html',
                            Plugin=Plugin, pagination=pagination, endpoint='.custom_blog_plugin',
                            plugins=plugins, page=page)
-
 
 @admin.route('/custom/blog-plugin/delete/<int:id>')
 @login_required
@@ -750,7 +726,6 @@ def delete_plugin(id):
         flash(u'删除插件成功！' ,'success')
     return redirect(url_for('admin.custom_blog_plugin', page=page))
 
-
 @admin.route('/custom/blog-plugin/sort-up/<int:id>')
 @login_required
 def plugin_sort_up(id):
@@ -767,7 +742,6 @@ def plugin_sort_up(id):
     else:
         flash(u'该插件已经位于最前面！', 'danger')
     return redirect(url_for('admin.custom_blog_plugin', page=page))
-
 
 @admin.route('/custom/blog-plugin/sort-down/<int:id>')
 @login_required
@@ -786,7 +760,6 @@ def plugin_sort_down(id):
         flash(u'该插件已经位于最后面！', 'danger')
     return redirect(url_for('admin.custom_blog_plugin', page=page))
 
-
 @admin.route('/custom/blog-plugin/disable/<int:id>')
 @login_required
 def disable_plugin(id):
@@ -799,7 +772,6 @@ def disable_plugin(id):
     flash(u'禁用插件成功！', 'success')
     return redirect(url_for('admin.custom_blog_plugin', page=page))
 
-
 @admin.route('/custom/blog-plugin/enable/<int:id>')
 @login_required
 def enable_plugin(id):
@@ -811,7 +783,6 @@ def enable_plugin(id):
     db.session.commit()
     flash(u'启用插件成功！', 'success')
     return redirect(url_for('admin.custom_blog_plugin', page=page))
-
 
 @admin.route('/custom/blog-plugin/add', methods=['GET', 'POST'])
 @login_required
@@ -839,7 +810,6 @@ def add_plugin():
 
     return render_template('admin/blog_plugin_add.html', form=form)
 
-
 @admin.route('/custom/blog-plugin/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_plugin(id):
@@ -865,7 +835,6 @@ def edit_plugin(id):
 
     return render_template('admin/blog_plugin_add.html', form=form, page=page)
 
-
 @admin.route('/account/')
 @login_required
 def account():
@@ -874,7 +843,6 @@ def account():
 
     return render_template('admin/admin_account.html',
                            form=form, form2=form2)
-
 
 @admin.route('/account/change-password', methods=['GET', 'POST'])
 @login_required
@@ -891,7 +859,6 @@ def change_password():
         else:
             flash(u'修改密码失败！密码不正确！', 'danger')
             return redirect(url_for('admin.account'))
-
 
 @admin.route('/account/edit-user-info', methods=['GET', 'POST'])
 @login_required
@@ -910,7 +877,6 @@ def edit_user_info():
             flash(u'修改用户信息失败！密码不正确！', 'danger')
             return redirect(url_for('admin.account'))
 
-
 @admin.route('/help')
 @login_required
 def help():
@@ -919,4 +885,5 @@ def help():
 @admin.route('/statics')
 @login_required
 def statics():
-    return render_template('admin/admin_statics.html')
+    _hits = BlogView.query.all()[0]
+    return render_template('admin/admin_statics.html', hits=_hits)
