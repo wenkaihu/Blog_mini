@@ -914,5 +914,9 @@ def edit_user_info():
 @admin.route('/help')
 @login_required
 def help():
-
     return render_template('admin/help_page.html')
+
+@admin.route('/statics')
+@login_required
+def statics():
+    return render_template('admin/admin_statics.html')
